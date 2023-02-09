@@ -1,11 +1,13 @@
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Account {
 
     //Private properties
     private BigDecimal balance;
-    private BigDecimal intrestRate =new BigDecimal("1.2");
+    private BigDecimal interest =new BigDecimal("1.2");
     private int accountNumber;
     private String accountType;
     private static int lastAssignedNumber = 1000;
@@ -13,14 +15,6 @@ public class Account {
     //Metod och en Konstruktor
     //Konstruktor körs direkt när en klass startas
     //Konstruktor rerturnar alldrig saker
-/*    public Account(){
-        lastAssignedNumber++;
-        accountNumber=lastAssignedNumber;
-
-        System.out.println(accountNumber);
-        this.balance=new BigDecimal (0);
-
-    }*/
 
     //Overloading
     //Eftersom om man använder string i main så använder man denna istället
@@ -32,37 +26,43 @@ public class Account {
 
         System.out.println("This is card number "+accountNumber);
         this.balance=new BigDecimal (0);
+
     }
 
-    public void deposit(BigDecimal ammount){
+    public void transferred(BigDecimal ammount){
         balance=balance.add (ammount);
+        System.out.println ("Grattis du har "+ ammount +" kr");
     }
 
     public void withdraw(BigDecimal ammount){
         balance=balance.subtract (ammount);
     }
 
-    public BigDecimal intrest(){
-        BigDecimal calculate=balance.multiply(intrestRate).divide (new BigDecimal (100), RoundingMode.DOWN);
+    public String interest(){
+        NumberFormat percentFormat = NumberFormat.getPercentInstance(new Locale ("sv", "SE"));
+        percentFormat.setMaximumFractionDigits(1); // Anger att vi vill ha max 1 decimal
+        String percentStr = percentFormat.format(interest.divide (new BigDecimal (100), RoundingMode.DOWN));
 
         //System.out.println (calculate);
-        return calculate;
+        return percentStr;
     }
     //Incaptulation
     public void presentation (){
         System.out.println ("Your balance is "+balance+" SEK");
-        System.out.println ("And your intrest is "+intrest()+"%");
+        System.out.println ("And your intrest is "+interest()+"%");
 
     }
 
 
 
-    public BigDecimal getBalance() {
-        return balance;
+
+    public String getBalance() {
+        String balanceStr = NumberFormat.getCurrencyInstance(new Locale("sv","SE")).format(balance);
+        return balanceStr;
     }
 
-    public BigDecimal getIntrestRate() {
-        return intrestRate;
+    public BigDecimal getInterestRate() {
+        return interest;
     }
 
     public int getAccountNumber() {
@@ -82,7 +82,7 @@ public class Account {
     }
 
     public void setIntrestRate(BigDecimal intrestRate) {
-        this.intrestRate = intrestRate;
+        this.interest = intrestRate;
     }
 
     public void setAccountNumber(int accountNumber) {
@@ -98,6 +98,6 @@ public class Account {
     }
     public String accountInfo(){
         return  this.accountNumber + " "+this.balance + " kr " +
-                this.accountType + " "+ this.intrestRate + " % ";
+                this.accountType + " "+ this.interest + " % ";
     }
 }
