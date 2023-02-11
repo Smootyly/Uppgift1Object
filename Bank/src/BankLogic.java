@@ -20,41 +20,63 @@ public class BankLogic {
     }
 
     public boolean createCustomer (String name, String surname, String pNo) {
+        //loop list customerList
         for (Customer customer : customerList) {
+            //If personal number exist in the list
             if (customer.getPersonalID ().equals (pNo)) {
-                System.out.println ("Ja las inte till");
+                //Did not add customer
                 return false;
             }
         }
+        //Added Customer
         customerList.add (new Customer (name, surname, pNo));
-        System.out.println ("Ja las till");
         return true;
     }
 
     public ArrayList<String> getCustomer (String pNo) {
         ArrayList<String> customerInfoPrint = new ArrayList<> ();
+        //loop list customerList
         for (Customer customer : customerList) {
+            //If personal number exist in the list
             if (customer.getPersonalID ().equals (pNo)) {
                 customerInfoPrint.add (customer.customerInfo ());
+                //Loop list accountList
                 for (Account account : customer.accountList) {
                     customerInfoPrint.add (account.accountInfo ());
                 }
             }
         }
         if (customerInfoPrint.isEmpty ()) {
-            System.out.println ("Ingen kund hittades");
+            //Could not find customer
             return null;
         } else {
-            System.out.println ("Kund " + customerInfoPrint + " hittades");
+            //Customer found
             return customerInfoPrint;
         }
     }
-
-    public int createSavingsAccount (String pNo) {
+    //Dubbelkolla med Marcus
+    public String getAccount(String pNo, int accountId) {
+        //Loop list customerList
         for (Customer customer : customerList) {
+            //If personal number exist in the list
+            if (customer.getPersonalID ().equals (pNo)) {
+                //Loop list accountList
+                for (Account account : customer.accountList) {
+                    if (account.getAccountNumber () == accountId) {
+                        return account.accountInfo ();
+
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    public int createSavingsAccount (String pNo) {
+        //loop list customerList
+        for (Customer customer : customerList) {
+            //If personal number exist in the list
             if (customer.getPersonalID ().equals (pNo)) {
                 customer.createAccount ("Sparkonto");
-                System.out.println ("Skapa ett nytt konto for " + pNo);
                 return customer.accountList.get (customer.accountList.size () - 1).getAccountNumber ();
             }
         }
@@ -63,6 +85,7 @@ public class BankLogic {
     }
 
     public boolean changeCustomerName (String name, String surname, String pNo) {
+        //loop list customerList
         for (Customer customer : customerList) {
             if (customer.getPersonalID ().equals (pNo)) {
                 if (surname!="")
@@ -73,27 +96,89 @@ public class BankLogic {
             }
         }
         return false;
-
     }
 
-    public Boolean Deposit(String pNo, int accountId, int amount){
+    public Boolean deposit(String pNo, int accountId, int amount){
+        //Check if account is 0 or negative
         if(amount>0) {
+            //loop list customerList
             for (Customer customer : customerList) {
+                //If personal number exist in the list
                 if (customer.getPersonalID ().equals (pNo)) {
+                    //If personal number exist in the list
                     for (Account account : customer.accountList) {
                         if (account.getAccountNumber () == accountId) {
+                            System.out.println ("Transfere");
                             account.transferred (new BigDecimal (amount));
                             return true;
                         }
-
+                        System.out.println ("Did not transfer");
                     }
                 }
             }
         }
-            System.out.println ("YOU FOOL");
             return false;
     }
     public boolean withdraw(String pNo, int accountId, int amount){
+        //Check if account is 0 or negative
+        if(amount>0) {
+            //Loop list customerList
+            for (Customer customer : customerList) {
+                //If personal number exist in the list
+                if (customer.getPersonalID ().equals (pNo)) {
+                    //Loop list accountList
+                    for (Account account : customer.accountList) {
+                        if (account.getAccountNumber () == accountId) {
+                            //Kolla om den är större
+                            int res=account.getBalance ().compareTo (BigDecimal.valueOf(amount));
+                            System.out.println (res);
+                            //First value is bigger
+                            if (res == 1 || res==0) {
+                                account.withdraw (new BigDecimal (amount));
+                                System.out.println ("Amount är:" + amount);
+                                return true;
+                            }
+                            else;
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println ("YOU poor bitch");
+        return false;
+    }
+    //Dubelkolla med Marcus
+    //Finns remove account ska vi göra om det
+    public String closeAccount(String pNo, int accountId){
+        //loop list customerList
+        for (Customer customer : customerList) {
+            //If personal number exist in the list
+            if (customer.getPersonalID ().equals (pNo)) {
+                //Loop list accountList
+                for (Account account : customer.accountList) {
+                    if (account.getAccountNumber () == accountId) {
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    //dubbelkolla med marcus
+    //hur returnar man något som blivit borttaget?
+    public ArrayList<String> deleteCustomer(String pNo){
+        ArrayList<String> deleted = new ArrayList<> ();
+        //loop list customerList
+        for (Customer customer : customerList) {
+            //If personal number exist in the list
+            if (customer.getPersonalID ().equals (pNo)) {
+                deleted.add (customer.customerInfo ());
+                customerList.remove (customer);
+                return deleted;
+                }
+            }
+        return null;
+        }
 
     }
-}
+

@@ -11,7 +11,7 @@ public class Customer {
 
     public Customer(String firstName,String lastName, String personalID){
         accountList = new ArrayList<> ();
-        createAccount ("Sparkonto");
+        //createAccount ("Sparkonto");
         this.firstName=firstName;
         this.lastName=lastName;
         this.personalID=personalID;
@@ -24,19 +24,15 @@ public class Customer {
 
     public void removeAccount (int accountNumber){
         for (int i =0; i < accountList.size(); i++){
-            System.out.println (accountList);
             if (accountList.get(i).getAccountNumber () == accountNumber){
                 accountList.remove (accountList.get(i));
-                System.out.println ("Account removed");
-                System.out.println (accountList);
             }
         }
-
     }
 
 
 
-    //Incapsulation
+    //Encapsulation
     public String getFirstName() {
         return firstName;
     }
