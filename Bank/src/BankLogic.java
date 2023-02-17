@@ -1,3 +1,5 @@
+//Peter Söder
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,7 @@ public class BankLogic {
 
     }
 
+    //Get all customers
     public ArrayList<String> getAllCustomers () {
         ArrayList<String> tempCustList = new ArrayList<> ();
         for (Customer customer : customerList) {
@@ -19,6 +22,7 @@ public class BankLogic {
 
     }
 
+    //Create customer
     public boolean createCustomer (String name, String surname, String pNo) {
         //loop list customerList
         for (Customer customer : customerList) {
@@ -33,6 +37,7 @@ public class BankLogic {
         return true;
     }
 
+    //Get customer info
     public ArrayList<String> getCustomer (String pNo) {
         ArrayList<String> customerInfoPrint = new ArrayList<> ();
         //loop list customerList
@@ -54,7 +59,7 @@ public class BankLogic {
             return customerInfoPrint;
         }
     }
-    //Dubbelkolla med Marcus
+    //Get account info
     public String getAccount(String pNo, int accountId) {
         //Loop list customerList
         for (Customer customer : customerList) {
@@ -71,6 +76,7 @@ public class BankLogic {
         }
         return null;
     }
+    //Create a savings account for excisting customer
     public int createSavingsAccount (String pNo) {
         //loop list customerList
         for (Customer customer : customerList) {
@@ -84,20 +90,24 @@ public class BankLogic {
 
     }
 
+    //Change first name or last name or both
     public boolean changeCustomerName (String name, String surname, String pNo) {
         //loop list customerList
         for (Customer customer : customerList) {
             if (customer.getPersonalID ().equals (pNo)) {
-                if (surname!="")
-                customer.setLastName (surname);
-                if(name!="")
-                customer.setFirstName (name);
-                return true;
+                if (surname!=""||name!="") {
+                    if (surname != "")
+                        customer.setLastName (surname);
+                    if (name != "")
+                        customer.setFirstName (name);
+                    return true;
+                }
             }
         }
         return false;
     }
 
+    //Deposit chash from account
     public Boolean deposit(String pNo, int accountId, int amount){
         //Check if account is 0 or negative
         if(amount>0) {
@@ -108,17 +118,17 @@ public class BankLogic {
                     //If personal number exist in the list
                     for (Account account : customer.accountList) {
                         if (account.getAccountNumber () == accountId) {
-                            System.out.println ("Transfere");
+                            //System.out.println (accountId);
                             account.transferred (new BigDecimal (amount));
                             return true;
                         }
-                        System.out.println ("Did not transfer");
                     }
                 }
             }
         }
             return false;
     }
+    //Withdraw cash from account
     public boolean withdraw(String pNo, int accountId, int amount){
         //Check if account is 0 or negative
         if(amount>0) {
@@ -131,11 +141,9 @@ public class BankLogic {
                         if (account.getAccountNumber () == accountId) {
                             //Kolla om den är större
                             int res=account.getBalance ().compareTo (BigDecimal.valueOf(amount));
-                            System.out.println (res);
                             //First value is bigger
                             if (res == 1 || res==0) {
                                 account.withdraw (new BigDecimal (amount));
-                                System.out.println ("Amount är:" + amount);
                                 return true;
                             }
                             else;
@@ -145,12 +153,10 @@ public class BankLogic {
                 }
             }
         }
-        System.out.println ("YOU poor bitch");
         return false;
     }
-    //Dubelkolla med Marcus
-    //Finns remove account ska vi göra om det
-    public String closeAccount(String pNo, int accountId){
+    //Close an account for an excisting customer
+    public String closeAccount(String pNo, int accountId) {
         //loop list customerList
         for (Customer customer : customerList) {
             //If personal number exist in the list
@@ -158,14 +164,16 @@ public class BankLogic {
                 //Loop list accountList
                 for (Account account : customer.accountList) {
                     if (account.getAccountNumber () == accountId) {
+                        account.accountInfoWithIntrestEarned ();
+                        customer.removeAccount (account);
+                        return account.accountInfoWithIntrestEarned ();
                     }
                 }
             }
         }
         return null;
     }
-    //dubbelkolla med marcus
-    //hur returnar man något som blivit borttaget?
+    //Delete a customers dara from the array customer and its accounts
     public ArrayList<String> deleteCustomer(String pNo){
         ArrayList<String> deleted = new ArrayList<> ();
         //loop list customerList
@@ -173,6 +181,9 @@ public class BankLogic {
             //If personal number exist in the list
             if (customer.getPersonalID ().equals (pNo)) {
                 deleted.add (customer.customerInfo ());
+                for (Account account : customer.accountList) {
+                        deleted.add (account.accountInfoWithIntrestEarned ());
+                    }
                 customerList.remove (customer);
                 return deleted;
                 }
